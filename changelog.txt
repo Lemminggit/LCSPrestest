@@ -1,0 +1,1154 @@
+﻿debug without recompiling
+debug_defines.txt
+
+lines (including comments) cannot be longer than 80 characters or LCS freezes on startup
+all lines are ultimately ignored unless the correspond to a specific debug command.
+
+New for 4.12.5
+(Almost) Fully Editable Save Files
+Change names, code names, all attributes, all skills, all outstanding crimes, for all LCS members
+Change the political party of all executives, presidents, senators, congressmen, and supreme court members, and some of their names
+Change date and year to whatever you want
+Change a few other options
+
+Back up your save before editing .verbose files
+
+4.12.6
+stealth.cpp
+2)
+added a suspicion check for weapons that have been "holstered", meaning weapons carried in the squad inventory, but not equipped
+Since weapons (including ammunition) cannot be taken to a site without being equipped to a squad member, this was an exploit (Unimplemented)
+TODO Weapon concealment overhaul
+currently basically all handguns are size 5, rifles size 15, and shotguns/smgs size 10.  Default value is 15.
+All armors have a concealment rating of 5 except naked (0) and trenchcoat(10)
+Dufflebag of guns seems worth considering.
+
+3)
+Car chase unit quantity is now based on logarithmic progression instead of linear.  Tweaking is likely necessary, but still.
+
+6)
+Mistakenly attacking innocents: if skill is 8 or higher, there is no chance of mistakenly hitting innocents (except when used as a human shield).
+If skill is 7 or lower, the odds are based on skill, with a maximum of 10% chance at skill = 0;
+Melee weapons only require a skill of 4.
+If skill is 3 or lower, the odds are based on skill, with a maximum of 5% chance at skill = 0;
+
+26)
+Able to repair clothing in bulk (and tend hostages)
+
+34)
+Skills not trainable in university
+   SKILL_AXE,
+   SKILL_HEAVYWEAPONS,
+   SKILL_KNIFE,
+   SKILL_PISTOL,
+   SKILL_RIFLE,
+   SKILL_SHOTGUN,
+   SKILL_SMG,
+
+new skills trainable in university
+
+++   SKILL_CLUB, 
+++   SKILL_SEDUCTION, 
+++   SKILL_STEALTH, 
+++   SKILL_STREETSENSE, 
+++   SKILL_THROWING, 
+   
+ ++  SKILL_COMPUTERS,
+ ++  SKILL_RELIGION,
+ ++  SKILL_SWORD,
+ ++  SKILL_TAILORING,
+
+4.12.7
+More creature characteristics moved to XML for easier modding
+
+	<seethroughstealth> (interval)
+	how difficult it is to fool through stealth
+	default:		3
+	<seethroughdisguise> (interval)
+	how difficult it is to fool through disguise
+	default:		3
+	
+	<talkreceptive>(0 or 1)
+		is receptive to talking and persuasion
+	<kidnap_resistant>(0 or 1)
+		is especially difficult to kidnap
+	<reports_to_police>(0 or 1)
+		reports to the police if attempted to datenap
+HUGE Bugfix:
+The states were listed in the wrong order.
+Correction:
+"
+Arizona
+Arkansas
+"
+not
+"
+Arkansas
+Arizona
+"
+Unfortunately, the state_bias of -2 for Arizona and -1 for Arkansas will only be corrected in new save files.  Old save files will continue to have them flipped around.
+
+
+Another 78 external txt files
+As a placeholder the new folder mostlyendings contains almost all of them.
+
+Added external txt file "allText.txt"
+It contains 476 lines from throughout LCS, meant to help facilitate translation without recompiling.
+
+Transferred string data from help.cpp to externallyStoredData
+
+transferred all ingame help information to helpTopics.txt
+
+The remaining new files make up the bulk of the issue-based text now within art/talk/
+
+This brings total external txt files to 285.
+
+Substantial internal restructuring of includes.h
+based on the work by Schmel924
+
+Minor bugfixes:
+newgames did not give the player a last name, along with certain newsstories
+BUG CAUSED BY THE ABSENSE OF TYPE-SAFETY IN C++
+Just when I was starting to like C++ it does this.
+
+4.12.08 
+Fixed usage of certain characters for names.
+These six characters.
+áéöúóí
+
+TODO: random crashing when recruiting?  I have been unable to replicate the bug, it may be limited to Windows 10 or other unknowns.
+
+4.12.09
+üëòâô
+Five more characters added to usable characters for names.
+'¢' (which only appears in the name of a Puerto Rican city) is buggy in a way that requires an entirely separate fix from the other 11 characters
+Otherwise, this amounts to all special characters currently present in LCS names.
+
+Rolled back some changes in sneak attacks.
+
+Note to self: If a character is given a name that starts with '#' and verbose save files are turned on, LCS will crash when the verbose save file is loaded.
+This is because '#' is used at the beginning of a line to indicate a comment in human readable files.
+
+HUGE Bugfix (no joke)
+It seems that, upon game over, all save files are deleted (not just the current one).  This has been in place since before I got involved.
+Still, fixed.
+
+Fixed autosave problem.  Autosave was hard-coded to remain off, now it depends on init.txt
+
+new class
+title_screen
+Handles most characteristics of new games, controls automatic savefile deletion and autosaving
+This is part of an intitiative to eliminate most usages of the extern keyword
+
+General housecleaning, reducing the number of times "creature.h" appears, as it is currently a massive cluster of interrelated header files.
+
+Partial implementation of class CreaturePool, meant to replace all references to vector<Creature *> pool
+For many files, vector<Creature *> pool is the only location where "creature.h" is required, and can therefore be removed once CreaturePool is implemented.
+Partial implementation of class LocationsPool, meant to replace all references to vector<Location *> location
+For many files, vector<Location *> location is the only location where "location.h" is required, and can therefore be removed once LocationsPool is implemented.
+
+Got rid of 14 largely unnecessary files, mostly header files.  Consolidated the entire news folder into news.cpp
+Since nearly all those functions were used exclusively within news.cpp, splitting them into separate files, separate headers, did nothing to reduce complexity, but bogged down compile time.  (clean build hovers at 2m 10s, down from 2m 15s, small enough that it could be a measurement error, but coupled with a reduced filesize of almost the exact same proportion.  Most likely coincidental, but academically interesting.)
+
+
+4.12.10
+Fixed cause of frequent crashes.  Blank multiline text was treated as single line text.
+
+4.12.11
+Fixed bug where files would not be deleted upon defeat.  (This bug was introduced when the "defeat deletes all savefiles" bug was fixed)
+Fixed typo where "# - Check status of liberal" contained unusual characters.  It seems the txt file had some sort of metadata.  I do not know how to detect if this problem exists elsewhere.
+Fixed bug where "V - Evade" appeared on the wrong line.
+
+4.12.12
+Rush job, reverted code to earlier version to finally fix the recruitment bug.
+
+4.12.13
+Fixed the missing personal ads.  Appears to have been an old bug.
+Completed restructuring that was started in 4.12.09
+(primarily the removal of unused header files and include statements)
+Curiously, this has resulted in a substantial reduction in filesize.
+'Upgraded' to VS 2017
+New compile time 2m 40s, up from 2m 15s
+New filesize 1515 KB, down from 1926 KB
+Notably Visual Studio 2017 keeps a hidden folder .vs with a filesize of just under 2 GB.  It seems to accumulate size over time, as 4.12.12 has the same folder at 600 MB.  The fact it keeps crashing my PC makes more sense, as the SSD I keep Visual Studio on is... unreliable.
+Minimum size for the folder appears to be 40 MB.
+Microsoft is making it very hard not to hate them.
+
+4.12.14
+Fixed the university bug, where the new studies weren't fully implemented.
+namely ACTIVITY_STUDY_CLUB, ACTIVITY_STUDY_STREETSENSE, ACTIVITY_STUDY_THROWING, ACTIVITY_STUDY_STEALTH, ACTIVITY_STUDY_SEDUCTION,
+LCS is now considered Stable.
+
+4.12.15
+Fixed the ever evasive "stats changing during interrogation" bug.
+Turns out it had nothing to do with interrogation.
+Creature::get_attribute() modifies the attribute based on Juice and Age.  Not knowing about the Age part of the equation, age modifiers were being reapplied to creatures every time the game was saved.  (Ironically not including "Health", because Age modifiers for Health are aplied elsewhere in the code).
+
+Also, shifted around some of the internal code.  Removing more usage of the keyword "extern", and all non-standard header files are now #included using relative paths instead of absolute paths.  (i.e. replacing #include <header.h> with #include "header.h" or #include "../header.h" etc.)  I'm excited about this change because it makes LCS easier to compile using g++, and once I can get LCS to compile with g++ I won't need to use Visual Studio anymore and I will finally be able to actually help other people compile the damn thing.
+
+4.12.16
+Used the software "CppDepend" for the first time.  Great stuff, detects all sorts of code smells, all sorts of everything.
+Helped me fix bugs that hadn't even been reported, since, for example, it detects if statements that are always true.  This meant that a prison break would not report if more than one LCS member escaped in the process.  Pretty darn arcane, can't imagine a situation where that was ever going to be found.
+
+The various key pressing in mode_site() have been relegated to individual methods.  If the player presses a movement or wait key, the method moveOrWaitThenCheckForExit() is called.  This method is far from optimal, as it currently requires ten parameters, three of which are passed by reference and potentially modified.
+
+All instances of getkeyAlt() where the value is not stored or used have been replaced with a new method void pressAnyKey().  This amounted to 574 replacements, leaving only 123 times getkeyAlt() is actually needed.
+
+Returned to using Visual Studio 2015.  Unable to get g++ to compile, but got closer than last time.
+
+Removed most usage of keyword typedef.  Since they were just renamed map< , > the usage of "typedef" did not make the code clearer, I originally added those instances of keyword typdef because I didn't know how to use maps directly.
+
+Removed tags from "allText.txt", as these are better off as constant strings.
+Replaced a very large number of string literals with const strings.  This has resulted in most files #include "constant_strings.h"
+Usage of blankString = "" is perhaps going overboard, and constitutes many of the instances.  Many header files now require constant_strings.h, especially because of blankString = "".
+The file crimesquad.exe has significantly increased in size, from 1512 kB to 3148 kB.  It is assumed to also run slower, at least on startup, but this remains outside the perceptive abilities of the naked eye.
+Pretty much for the hell of it, removed the file constant_strings.h and all references to it.  Resulted in new filesize of 1440 kB.  There is now some redundancy with "const string tag_... = ...;"  Many should probably be moved to header files.
+All known instances of comparisons against string literals have been replaced with constants.  This is some 950+ const declarations, all with at least one replacement.
+1211 lines with const string ... "
+929 lines with #include "
+190 lines with const char
+8147 lines with "
+Thus approximately 6000 string literals remain.
+Terra Vitae 1.32 has 14000 lines with "
+Measured TV because I don't have a copy of 4.10 on hand.
+I have thereby removed an estimated 6000 ~ 8000 string literals from LCS during my tenure.  At this time I plan to automate the removal of the remaining string literals in one single endeavor.  The hardest part will be inspecting the files to ensure no side effects.
+
+Fixed the "crash on recruit" bug.
+
+4.12.17
+
+5999 lines with const string ... "
+931 lines with #include "
+191 lines with const char
+7704 lines with "
+Extracted another 4788 string literals into constants.  Filesize increased to 1681 kB.
+Changes in numbers of "const char" and "#include" are side-effect free mistakes on my part.
+Decrease in "lines with \"" is due to removal of redundant strings, and some instances of multiple strings in a line becoming multiple constants.
+Small number of string literals remain due to error in algorithm meant to remove them (mostly either multiple string literals on a single line or string literals that included multiple '"' characters).  Will likely remove manually.
+Tweaked and ran the algorithm a few more times, 
+Filesize 1689 kB
+6209 lines with const string ... "
+931 lines with #include "
+191 lines with const char
+104 lines with const std::string
+7700 lines with "
+Header files were not run through the algorithm.
+About twenty strings had to be removed manually.
+in sitemode folder
+grafitti = {"    ", "    ", "    ", "    "}
+Can't immediately replace with const strings, something about initializing a char* with const char*
+Considered inconsequential.
+
+Thus, nearly all string literals have been extracted.  Near enough that I will continue to the next stage.
+
+Fixed the "unable to obtain loot" bug.
+
+4.12.18
+
+Reduced complexity of prepareencounter() method.  Moved most of its data to a map<int, vector<int> >, eliminating roughly 600 lines of code.
+Split up some of news.cpp
+char story[5000] is now declared only on the scope it is needed, resulting in a few methods returning a string instead of modifying one by reference.
+Altered damagemod() in fight.cpp
+Split apart attack() - Needs more work, subroutine has 8 parameters
+Split apart initsite()
+
+Split apart advanceday()
+Changed several function signatures to no longer require char &clearformess (whatever in the hell it even is.  these functions immediately changed its value without using it, now the value is changed before calling the function.  Thus &clearformess does not need to be passed at all, let alone by reference)
+deleted daily/date.h
+deleted daily/recruit.h
+new function pressSpecificKey(...)
+repeatedly calls getKey() until the specified key is pressed, for times when pressAnyKey() is not quite usable.
+
+Bugfix:
+Squads visiting apartments (that have been rented) are correctly prompted "Why is the squad here?   (S)afe House, to cause (T)rouble, or (B)oth?"  So, no more disbanding the squad in order to reassign their safehouse.
+Weird friggin bug.
+
+4.12.19
+
+No changes in code, reinstalled operating system and then recompiled due to suspicion of virus on my computer.
+
+4.12.20
+
+Restructured much of the trial() method, extracted submethods pleadGuilty() and pleadInnocent()
+Restructured the tend_hostage() method.  Mostly reduced scope of local variables y and p.
+Minor changes to siege.cpp
+Identified 155 instances of for loops using iterators declared outside the loop.
+Found and removed the usage of displayads(... int &it2)
+it2 is used in displayads() to pass to displaysinglead(), which uses it as an iterator, whose value is immediately reassigned to 0.
+In other words, int &it2 isn't used for any reason.
+Fixing fragile code is its own reward.
+19 for loops with iterators declared outside remaining.  These ones, at least, have a reason to declare the iterator outside the loop.
+regular expression used:
+for\s*\(\w*\s*\=
+Found a for loop within talkInCombat() that has an iterator declared outside the loop, but is not found by the regular expression.
+			int e = 0;
+			for (; e < ENCMAX; e++)
+In this instance, this programming practice may be justified.
+
+Removed an unused variable "nullify" from creaturePool.cpp monthlyRunTheSystem()
+
+Removed extern vector<Locations*> from fight.cpp
+Removed extern vector<Locations*> from reviewmode.cpp
+Removed extern vector<Locations*> from sitemode.cpp
+REMOVED  \src\daily\activities.cpp(285):extern vector<Location *> location; (double check when players bury bodies)
+REMOVED  \src\basemode\basemode.cpp(158):extern vector<Location *> location;
+  \src\title\saveload.cpp(132):extern vector<Location *> location;
+  \src\sitemode\shop.cpp(113):extern vector<Location *> location; (Just about empty, last few instances are complicated)
+REMOVED  \src\daily\siege.cpp(345):extern vector<Location *> location; (TODO Tons of cleanup, especially duplicate code, but that's the case everywhere)
+REMOVED  \src\sitemode\talk.cpp(88):extern vector<Location *> location;
+The remaining files using extern vector<Location *> location;
+
+Discovered bug: Clothing suspicion level remains based on last location, making it red or whatever even after returning to base.
+No change for ingame behavior, mostly only shows up if player visits location that even outside one is considered suspicious.
+Low priority.
+
+Added a function from loot.h to item.h, had previously been a new method for Loot class.
+
+Deleted a few pointless header files.
+
+LocationsPool.cpp is now about 3_000 lines, and the LocationsPool class possesses over 60 methods.  They have gone from part of the solution to being part of the problem.
+This is especially the case with regards to siege.cpp, as my coding became increasingly redundant as fatigue wore on.
+
+Added new key 'J' to reload weapons, but only weapons that are empty.
+Not the best, but it does the job.
+
+4.12.21
+
+Deleted translateid.cpp, moved most of its guts over to globals.cpp, except the part that accessed vector<Creature *> pool, which was moved to creaturePool.cpp, and the part accessing vehicletypes, which was moved to vehicle.cpp
+That said, translateid.cpp might work well as a class API.
+
+globals.cpp is where most of the vector<...> are declared, and saveload.cpp has to access most everything, so if those are the only two references to a previously global vector, the work is basically done.
+
+Removed instances of extern vector<vehicletype *> vehicletype, all except in vehicle.cpp and globals.cpp
+Removed instances of extern vector<vehicle *> vehicle,  all except shopnstuff.cpp, saveload.cpp, and globals.cpp
+Removed vector<datest *> date from everywhere except saveload.cpp.  Moved most of the uses to date.cpp
+
+creaturetypes.cpp has a large switch statement of all creatures and their accepted work locations.
+// TODO this can be extracted to a table
+
+Moved the remains of creaturetypes.cpp to creaturetype.cpp
+If only to end the confusion of the two files.
+
+The #define AGE_SENIOR macros have been commented out, except for AGE_TEENAGER and AGE_YOUNGADULT, which are the only ones used.
+verifyworklocation(Creature &cr, char test_type); contains a large switch statement of all creatures and their appropriate work environments.   This can be converted to a table at a later date.
+
+removed vector<recruitst *> recruit from all except daily.cpp, globals.cpp and saveload.cpp
+
+extern Matching lines: 1288    Matching files: 71    Total files searched: 159
+down from Matching lines: 1327    Matching files: 75    Total files searched: 161
+extern vector< Matching lines: 109    Matching files: 29    Total files searched: 159
+down from Matching lines: 146    Matching files: 36    Total files searched: 161
+
+Deleted shopnstuff.h
+Deleted shopnstuff.cpp - Absorbed into daily.cpp
+
+Replaced the Armor constructor Armor(&ArmorType ...) with Armor(int ...), as well as the related Creature method give_armor(&ArmorType ...) with give_armor(int ...)
+This allows removal of nearly all instances of extern vector<ArmorType> armortype, except armor.cpp, activate.cpp,  activities.cpp, locationsPol.cpp, and shop.cpp
+All except armor.cpp and shop.cpp have had the extern scope reduced to the method(s) calling it.
+
+This allowed creature.h to stop calling armortype.h
+7 files #include armortype.h, rather than the 42 that #include creature.h
+
+#include locations.h removed from creatures.h
+#include locations.h is now in 29 files, rather than 42.  Not much of an improvement.
+#include locationsEnums.h is located in 8 files, in addition to those with #include locations.h
+
+extern vector< Matching lines: 99    Matching files: 27    Total files searched: 158
+
+removed vector<squadst *> from chase.cpp
+
+Changed scope of various extern vector<...> from file to function level.
+Matching lines: 161    Matching files: 25    Total files searched: 158
+The extern vector<...> averaged less than two functions per file.
+
+ extern Creature encounter[ENCMAX];
+ extern short lawList[LAWNUM];
+and other extern arrays are getting the same treatment.
+extern\s*[\w\*\&]*\s*[\w\*\&]*\s*[\w\*\&]*\[
+Matching lines: 175    Matching files: 48    Total files searched: 158
+
+found numerous instances of extern char homedir[MAX_PATH_SIZE] being declared and not used.
+Matching lines: 384    Matching files: 48    Total files searched: 158
+
+Averaging barely more than 2 functions per file.
+
+Removed another twenty moveAlt(...), replaced with mvaddstrAlt(...)
+Only 165 left.
+
+Keyword extern appears in LCS
+Matching lines: 3770    Matching files: 70    Total files searched: 158
+I intend to reduce the scope from the file level to the function level on any of these that haven't already.  The various extern strings will likely have to be dealt with differently, though they only number 384 at this time.
+
+Matching lines: 4496    Matching files: 68    Total files searched: 158
+Increase of about 800.  Found and removed a number of unused externs, most notably unused extern MusicClass music, which allowed the #include musicClass.h to be removed.
+Apart from extern strings, about no extern usage on the global or file scope, save the aformentioned namespace conflict.
+
+Shifted a few const strings to be within the functions calling them.  Decided the usefulness of such actions are dubious, started extracting parts of the interrogation function.
+
+Some refactoring of creaturetype.cpp armCreature(Creature &cr, short type);
+Used tuples in refactoring of creaturetypes.cpp.  tuples should replace many of the fixed length vectors I have used in the past.  Passed an array by reference.  May be worth passing other arrays by reference.
+Replaced tuples with a struct.  Microsoft Visual Studio does not support tuples.  Not without going through a whole lot of extra trouble that isn't going to happen.
+
+Added new automated tests that create all existing creatures, and arm them based on every possible gun control law.
+As a side effect it creates all default locations, due to some overlap between the creature.cpp and locations.cpp code.
+
+If someone runs the automated tests, it is recommended to restart the program before starting a new game.
+
+Fixed a bug where Gentleman's Clubs were nameless.
+
+4.12.22
+
+Refactored news.cpp to remove most usage of char*
+Regular expression to find char* and char arrays (including some that are not used as string substitutes)
+char\s?\w*\s*[\*\[]+\w*
+Matching lines: 588    Matching files: 60    Total files searched: 158
+
+Cleaned up formatting.
+Slogans no longer have a 1/20 chance of using default_slogans.txt
+
+Initiating process for single cpp file.
+Moved nearly all source code to activate.cpp
+
+All usage of keyword extern limited to the function scope, except for instances past line 52_384 (of 53_200 lines)
+and extern string closeParenthesis;
+Located in locationsPool.cpp
+
+5_260 instances of "//"  Includes commented code that mostly can be removed.
+New file simpleFunctions.cpp
+Transfered a few functions out of activate.cpp that do not require anything other than constants and enumerators.
+Note that it currently has #include "includes.h"
+This will eventually be replaced.
+
+Created new struct and function 
+struct fullName {
+	string first;
+	string middle;
+	string last;
+
+};
+fullName generate_long_name(char gender);
+Probably not going to fully implement it.
+moved constructPositiveEventStory(view); and constructNegativeEventStory(view); to simpleFunctions.cpp
+Nearly at the point where this part of news stories can be stored externally.
+
+Deleted bulk of useless comments (the #include "" and such, redundant copyright information, artefacts from multiple file version)
+It's astonishing how much faster 'single file version' compiles.  Working out the issues to make 'multiple file version' compile just as quickly is still a priority.
+The .exe even has a smaller filesize.  1672 KB instead of 1739 KB, though this is considered only academically interesting.
+
+Minor shuffling of string constant, namely collections made entirely of string constants have had the string constants defined within the collections, rather than externally.  Two strings capable of being used interchangably are best kept together.
+Deleted commented code.
+Removed preprocessor #define FORMAT_OUTPUT
+char sbuf[81]; has had its scope reduced from static global to function.
+Likely to rewrite functions addstr_f(), mvaddstr_f(), addstr_fl(), and mvaddstr_fl()
+All four, combined, are used 19 times.  Some variation of these functions could replace a large proportion of the approx. 3700 uses of addstr/mvaddstr.
+Curiously, the number (4048) of "const string" exceeds the number (3769) of "addstr".  Nearly all "const string" are used exactly once, (obviously excluding const xml tags).  Replacing the string literals with variable const strings has unveiled the underlying redundant nature of these thousands of lines of code.
+Amusingly, "addstrAlt(saysComma, gamelog);" appears 16 times.  This single string is used verbatim almost as many times as formatted strings are passed to addstr_f and co.
+Gathered all const string.  3265 total.  Approx. 700 begin with " " approx. 50 begin with ", " approx. 100 begin with "'s" approx 20 begin with "." "!" or "?"
+
+Replaced many of the "(story += x); (story += y)" with "story += x\ + y"
+It was a relic from when these lines were strcat(..., ...);
+Removing the parentheses helped clear up when numbers are added to the string, making sure tostring(int i) is used.
+Making these single line, i.e. story += x + y + z; instead of "+= x; += y; += z;" is mostly a matter of personal preference.  In Java, strings are immutable, so repeated calls to += for a string is wasteful.  StringBuilder is preferable, but I don't know offhand whether C++ has an equivalent class, or whether strings are mutable in C++.
+
+Transfered a few switch statements to maps.
+Removed an unused part of allTextString, and its corresponding entry in allText.txt
+
+Split constructNegativeEventStory() and constructPositiveEventStory() into functions for each individual story.  Mostly removed unused "const string" and "extern" within each smaller function.
+
+Converted some switch statements into maps.
+char hasdisguise(const Creature &cr) has been made to use maps in place of most of its switch statement, though it looks really weird.
+
+Converted most of the world creation algorithm into maps, rather than a long series of identicle methods.
+Converted armSpecificCreature() switch statement into a series of unique functions.  One step closer to having it map-based.
+Exported switch statement from verifyworklocation() to external map.
+
+Fixed error in news calculation.  Had "story += ..." but did not proceed to print story anywhere.
+Replaced a number of void function(... char*); with string function(...); as well as (newsstoryst& ns) with (const newsstoryst ns)
+Replaced 'void sexdesc(char *str)' and related with 'string sexdesc();' (four functions)
+
+void review_mode(const short mode)
+replaced the switch statement inside a for loop
+with for loops inside a switch statement
+Though more verbose, this means the switch statement is only checked once, instead of every iteration.
+
+Cleaned up some siege and interrogation code.
+Further attempts at untangling tendHostage() method.
+Fixed a few instances of string += int
+replaced with string += tostring(int)
+as the autoconversion turns them into chars instead.
+
+Replaced some while loops with for loops.
+Reverted minor change to enemyattack();
+
+Gutted almost exactly half the attack(Creature Creature) function, pulling out the new function  inflictDamage(const int numhits, Creature &a, Creature &t, const int aroll, const int droll, const bool sneak_attack, const attackst* attack_used)
+Since it takes 7 parameters, this is suboptimal, but splitting the third largest function in half more than makes up for it.
+Converted several ifelse chains from talkInCombat() into switch statements.
+Converted each individual case into its own function.
+
+Converted mode_site() from a while(true) function to while(increment_mode_site(char &bail_on_base, char &hostcheck, int &encounter_timer));
+
+Made two new classes.
+AttackInfliction and AttackSeverity
+Currently both are being used as immutable data structures to simplify the parameters of the previously mentioned inflictDamage() and its internal function inflictNonZeroDamage()
+There is much room for further implementation.
+
+Converted the massive ifelse chain in attackst into a switch statement.
+This allowed for redundant conditionals to be easily spotted and removed.  Fortunately there weren't any, but a switch statement with 29 cases is a hell of a lot cleaner than a 29 link if else chains.
+CPPDepend agrees.  Its Cyclomatic Complexity was 163, but is now 7.
+
+The regular expressions I used to mostly automate the conversion:
+
+\s+
+,\r\nENUM_
+
+ENUM_(\w*)
+map<string, int>::value_type\(\1, ENUM_\1\)
+
+\s+(\w*),
+case \1:\r\n\r\nbreak;\r\n
+
+Fixed bug where guncontrol news stories displayed incorrectly.
+A previous regular expression used to replace
+story += ;
+...
+story += ;
+with
+story += \
+...
+ + \
+ + ;
+Broke a number of else statements that were not confined to curly braces.
+Relocated much of the strings used in articles to helper functions, namely the sections that rely on lawList[]
+This allows for no usage of extern lawList[] within the news.cpp file.
+It also allows for a significant reduction in local variables within any single function, and serves to make the numerous 'filename_string_x001' style string constants less ambigious.
+
+Applied the above regular expressions (to convert ifelse chains into switch statements) to the founderQuestion function.  Loop is now much cleaner.
+Added warning for player if attempting kidnapping, but all but one conservative posess "protects_from_kidnap"
+
+4.12.23
+
+Rewrote much of the printwall() method, removing a substantial amount of duplicate code.
+Similar process with otherCrime() method.
+Minor refactoring.
+Massive ifelse chain VehicleType::VehicleType(MCD_STR xmlstring) replaced with nested switch statements.
+Minor refactoring of news code.
+Turned the while(true) loop in review() to while(iterateReview()) {}, and converted its ifelse chain to a switch statement.
+
+Refactored some updateworld_laws() to remove duplicate code.
+Changed location::rename() to use const string instead of const char*
+BUGREPORT: Locations (Ministry of Love etc.) do not get renamed properly when laws change. (At least, not in multicity mode)
+
+Refactored getThatGroundLoot()
+Identified and repaired likely source of "no fireman raids" bug.
+else if (lawList[LAW_FREESPEECH] <= -1 && LocationsPool::getInstance().getTimeUntilSiege(l, SIEGE_FIREMEN) == 0) 
+		LocationsPool::getInstance().setTimeUntilSiege(l, SIEGE_FIREMEN, -1);
+		offended_firemen = 0;
+	
+This code causes offended_firemen to be zeroed out every time its containing function is called, but from context it is clearly only supposed to do that if the conditional is passed.  i.e. missing curly braces.  This is why if statements are best written with curly braces, even if the statement only uses one line afterwards.
+
+Hollowed out much of  huntingSiegePrint(const int l, int& numpres);
+Clear instance of duplicate code, similarities between raids.  Work on later date.
+Refactoring of presidentialElection();
+CPPDepend now remarks 51 methods overly long/complex with Issues High
+293 with Issues Medium
+
+Fixed typo in tendhostage()
+Dismantled printnews() into constituent parts.
+
+Updated CppDepend so it doesn't include third-party code.
+Fixed bug where game crashes if recruiter goes on vacation while recruiting.
+
+Refactored pleadInnocent, others
+created new enum for LegalDefense
+
+Eliminated all usage of "extern short sitealarm"
+This has allowed "sitealarm" to become a bool, and eliminated the ambiguity of "sitealarm != 0, sitealarm == 1, sitealarm < 1" etc.
+
+Removed some dead code in chasesequence()
+it turns out the while(true) loop does not have any exits apart from the return statements.
+Therefore, the code that follows the loop cannot be executed.
+Similar issue fixed within footchase()
+
+Minor refactoring of select_augmentation(Creature *cr)
+extracted new method add_augmentation(Creature *victim, Creature *cr, AugmentType *selected_aug)
+
+Minor refactoring of displaystoryheader()
+
+extracted new method attempt_find_keys() from start_car()
+
+removed an "always false" conditional from creatureadvance()
+
+CppDepend now indicates 0 methods overly long/complex with Issues High.
+226 with Issues Medium
+Renamed Creature to DeprecatedCreature to help facilitate replacing it with simpler types.
+Performing similar actions with types that directly reference Creature.
+1071 instances of "Deprecated"
+
+New struct NameAndAlignment
+Takes seven variables from Creature.  Able to replace Creature in many cases.
+
+1044 instances of "Deprecated"
+1024
+
+765 within "activate.cpp" the single-file compile version.
+
+1017 instances of "Deprecated"
+750 within "activate.cpp" the single-file compile version.
+
+4.12.24
+Copied code back into multiple file setup.  Able to compile and run, no obvious bugs.
+Deprecated
+Matching lines: 1022    Matching files: 56    Total files searched: 158
+
+#include "newcreature.h"
+created new header file, newcreature.h, meant to contain all the non-deprecated aspects of creature.h.
+5 of the 43 instances of creature.h have been immediately replaced.
+
+1014 "Deprecated" (27 in globals.cpp) 55 files
+
+1006 (29 in globals.cpp) 44 files
+
+activate.cpp	25
+activate_sleepers.cpp	3
+activities.cpp	81
+advance.cpp	8
+automatedDataTests.cpp	3
+baseactions.cpp	4
+basemode.cpp	13
+chase.cpp	47
+chaseCreature.h	5
+commonactions.cpp	23
+commonactionsCreature.h	19
+commondisplay.cpp	21
+commondisplayCreature.h	6
+creature.cpp	56
+creature.h	38
+creaturePool.cpp	36
+creaturePoolCreature.h	16
+creaturetype.cpp	48
+creaturetype.h	6
+daily.cpp	46
+date.cpp	17
+fight.cpp	77
+fightCreature.h	8
+globals.cpp	29
+haulkidnap.cpp	13
+haulkidnapCreature.h	3
+interrogation.cpp	25
+justice.cpp	24
+locations.h	6
+locationsPool.cpp	40
+mapspecials.cpp	15
+miscactions.cpp	8
+newgame.cpp	4
+news.cpp	27
+recruit.cpp	6
+reviewmode.cpp	28
+saveload.cpp	12
+shop.cpp	11
+shop.h	6
+siege.cpp	29
+sitemode.cpp	41
+sleeper_update.cpp	12
+stealth.cpp	4
+talk.cpp	57
+
+Removed recruitst unused field "timeleft"
+Probably was copied from datest.
+Removed recruitst unused field "level", and "task",
+Sometimes written to, but it was never read.
+
+Combined locx, locy, and locz into a single structure coordinatest
+Minor refactoring.
+CppDepend identifies "60 days of debt".
+
+Refactored WeaponType so its const getters take an enumerator, rather than having a unique method for every single barely-used internal value.
+
+Major refactoring of LocationsPool.  Similar to technique in WeaponType.
+Located source of bug where disguise continues to be printed in red after returning to base.  Method of fixing, uncertain.
+commondisplay.cpp Line 713 is related.
+
+Restructuring of DeprecatedCreature class, laying groundwork for new ImmutableSimpleCreature superclass.
+Split apart Deprecateddatest and related structures, so only files using them import them.
+
+Minor refactoring of basemode.cpp
+
+Fixed bug where liberal guardian special reports were incorrectly titled "Loot_CEOLoveLetter" and similar.
+
+4.12.25
+Creature names appear in red regardless of situation.
+Game crashes when liberals set to auto-recruit.  Visual Studio debugger presents no usable information.  Online search suggests it may be an issue with compatibility of VS 2013 and VS 2017.
+
+My hatred of Visual Studio and C++ grows.
+
+
+X(1) The game crashes for me whenever I wait a day after assigning any squad member to "Recruiting" via the Activate menu.
+X (2) Also, when I'm on site, every NPC's name is in red, even though some are Liberal or Moderate. If I talk to them, their names are in their proper colors, so it's just the display text while on site.
+(3) Also another bug is when there are referendums/propositions and the population votes it seems to always vote in favour of the conservative ruling, even though when I check polls it goes 70-100% for liberal.
+(4) Another one is the buildings don't change names after policy change, so even though you will only have police officers the building is still called deathsquad hq
+X(5) Also another annoying bug, the slogan gets reset every time you exit the game.
+(6) Another one is I think that repairing clothes is bugged and you can't sell damaged clothes so your equipment just gets flooded with broken equipment.
+X (7) Disguise is always red.
+
+4.12.26
+
+Removed all usage and references to addstr_f(...) and other "add formatted strings" methods.  This fixed (1).
+Fixed (5).  New means of saving and loading slogan led to the slogan being saved, but not loaded.
+Fixed disguise continues to be printed in red after returning to base.
+Fixed (7) by reverting hasdisguise() into 4.12.19 version.
+Fixed (2), turns out the code checking the alignment was returning the creature's type instead.
+
+(8) possible bug with encounterSpecial(
+...
+	case SPECIAL_CAFE_COMPUTER:
+		encounterCafeComputer();
+
+ter is a bug in the game when i send any of my members on a mission that involves something with the police like stealing a car or sending out your squad on a mission even doing graffiti will crash the game 
+
+
+X The defendant, Alejandro Palin, is charged with
+ loitering and
+
+still printing "and" when there is only one charge.
+
+Partial refactoring of hasdisguise().  Less invasive than previous attempt.
+Removed several unused const strings.
+
+Fixed game crashing bug on total party kill.
+
+4.12.27
+
+Abolished all usage of "extern short cursite"
+Usage of extern keyword:
+Matching lines: 4912    Matching files: 67    Total files searched: 160
+
+
+fight.cpp damagemod() function updated to use const creature instead of creature&
+Of the 6 rules with a total 10 high level violations remaining, 5 are from Creature.  It is time.
+
+New struct CreatureHealth
+Contains const qualified DeprecatedCreature values pertaining to printhealthstat function.
+New struct CreatureJustice
+Contains const qualified DeprecatedCreature values pertaining to printliberalcrimes function.
+(constructor currently oversized)
+
+Split printliberalstats() function into six smaller functions.
+
+Use of DeprecatedCreature
+Matching lines: 676    Matching files: 45    Total files searched: 160
+
+Use of Deprecated
+Matching lines: 1009    Matching files: 49    Total files searched: 160
+
+(Deprecated
+Matching lines: 343    Matching files: 38    Total files searched: 160
+To focus on functions that take in a Deprecated structure.
+
+Matching lines: 333    Matching files: 38    Total files searched: 160
+
+const Deprecated
+Matching lines: 84    Matching files: 24    Total files searched: 160
+Matching lines: 71    Matching files: 18    Total files searched: 160
+
+Fixed Grimith's gamecrash.  It was brought on by attempting to recruit from an area that did not have any recruitable options.
+Something called "SITE_RESIDENTIAL_BOMBSHELTER"
+
+4.12.28
+
+Bug: Sudden Heat Vanishing
+
+Removed 23 instances of extern DeprecatedCreature encounter[ENCMAX];
+Matching lines: 19    Matching files: 7    Total files searched: 160
+ 
+extern 
+Matching lines: 4870    Matching files: 67    Total files searched: 160
+ 
+new struct CreatureAttributeList
+removed all references to DeprecatedCreature class member crimes_suspected[LAWFLAGNUM];
+removed all references to DeprecatedCreature class member name[CREATURE_NAMELEN];
+excluding references in saveload.cpp
+continued work removing references to internal variables of the DeprecatedCreature class.
+
+Extracted the American Flag graphic and the burning thereof into a table, allowing for arbitrary flag usage.
+
+Removed nearly all 
+	//extern short interface_pgup;
+	//extern short interface_pgdn;
+	
+Major refactoring of lcsmonthly.cpp
+
+Fixed failure to rename sites.
+initSite(Location loc) was used instead of initLocation(Location loc)
+I don't know why both functions exist with such similar names.
+
+4.12.29
+
+More refactoring.
+Identified a large number of instances where clearformess is guaranteed to be true, as well as instances it goes entirely unused, making it pointless as a variable.
+characterRespondsToRequest(const string, const string, const string);
+removes a fair amount of duplicate code.
+
+Fixed bug where hostages could starve during a siege, but did not need to eat.  Now they have to eat.
+
+Deprecated 
+Matching lines: 985    Matching files: 50    Total files searched: 160
+(Deprecated
+Matching lines: 341    Matching files: 37    Total files searched: 160
+
+Massive transfer of methods that use DeprecatedCreature& as an argument, moved into DeprecatedCreature as class methods.
+Total number to transfer numbers along the lines of 300 (including unknown number of duplicates, probably half or more).  A great many can be made private, once it comes to that.
+(DeprecatedCreature
+Matching lines: 255    Matching files: 31    Total files searched: 160
+Matching lines: 242    Matching files: 29    Total files searched: 160
+CppDepend is listing increased debt from the DeprecatedCreature class as it bloats.  This debt existed beforehand, it was just not measured by CppDepend as it largely ignores Globals.
+
+Deleted haulkidnapCreature.h
+creature.h now requires vehicle.h to be #include before it can be #include
+This is intended as temporary.  Files that do not otherwise require #include "vehicle.h" are followed by ///
+
+(DeprecatedCreature
+Matching lines: 199    Matching files: 26    Total files searched: 159
+
+Deleted deprecatedCreatureB.h
+Renamed overloaded method footchase into two methods, foot_chase() and footchase();
+The distinction is foot_chase() was previously footchase(DeprecatedCreature *cr), made into a member function for DeprecatedCreature.
+
+(DeprecatedCreature
+Matching lines: 148    Matching files: 19    Total files searched: 158
+
+const DeprecatedCreature
+Matching lines: 29    Matching files: 10    Total files searched: 158
+
+(DeprecatedCreature
+Matching lines: 76    Matching files: 13    Total files searched: 158
+const DeprecatedCreature
+Matching lines: 16    Matching files: 6    Total files searched: 158
+Nearly all within creature.h
+
+Renamed vector<Location *> location to listOfLocations
+Deletec deprecatedCreatureD.h
+
+Moved all DeprecatedCreature functions and values that involve other classes into private.
+Global functions requiring access to the now private functions made into DeprecatedCreature::static functions.
+Some exceptions for shop.cpp and creatureType.cpp, which are their own classes.
+
+Began work on AbstractCreature class.
+
+\([^\(\r\n]*Deprecated
+ Matching lines: 208    Matching files: 29    Total files searched: 158
+creature.h(709):
+  Matching lines: 60
+DeprecatedCreature::[^\(\r\n]+\([^\(\r\n]*Deprecated
+Matching lines: 55    Matching files: 10    Total files searched: 158
+
+Cut down:
+Find all "Deprecated and Problematic", Match case, Regular expressions, Find Results 1, Current Project: game.vcxproj, ""
+  creature\creaturetype.cpp(383):void CreatureType::make_creature(DeprecatedCreature& cr) const
+  creature\creaturetype.cpp(465):void CreatureType::give_weapon(DeprecatedCreature& cr) const
+  creature\creaturetype.cpp(486):void CreatureType::give_weapon_civilian(DeprecatedCreature& cr) const
+  creature\creaturetype.cpp(513):void CreatureType::give_armor(DeprecatedCreature& cr) const
+  
+  creature\creaturetype.h(11):	void make_creature(DeprecatedCreature& cr) const;
+  creature\creaturetype.h(18):	void give_weapon(DeprecatedCreature& cr) const;
+  creature\creaturetype.h(20):	void give_weapon_civilian(DeprecatedCreature& cr) const;
+  creature\creaturetype.h(22):	void give_armor(DeprecatedCreature& cr) const;
+  
+  daily\interrogation.cpp(907):	for (DeprecatedCreature* temp : temppool)//int p = 0; p < len(temppool); p++)  
+  
+  sitemode\shop.cpp(237): void Shop::enter(Deprecatedsquadst& customers) const
+  sitemode\shop.cpp(244): void Shop::choose(Deprecatedsquadst& customers, int& buyer) const
+  sitemode\shop.cpp(249): void Shop::browse_fullscreen(Deprecatedsquadst& customers, int& buyer) const
+  sitemode\shop.cpp(303): int fenceselect(Deprecatedsquadst& customers)
+  sitemode\shop.cpp(408): void sell_loot(Deprecatedsquadst& customers)
+  sitemode\shop.cpp(507): void choose_buyer(Deprecatedsquadst& customers, int& buyer)
+  sitemode\shop.cpp(598): void Shop::browse_halfscreen(Deprecatedsquadst& customers, int& buyer) const
+  sitemode\shop.cpp(880): void Shop::ShopItem::choose(Deprecatedsquadst& customers, int& buyer) const
+  
+  sitemode\shop.h(39):	virtual void choose(Deprecatedsquadst& customers, int& buyer) const = 0;
+  sitemode\shop.h(47):	void enter(Deprecatedsquadst& customers) const;
+  sitemode\shop.h(49):	virtual void choose(Deprecatedsquadst& customers, int& buyer) const;
+  sitemode\shop.h(54):	void browse_fullscreen(Deprecatedsquadst& customers, int& buyer) const;
+  sitemode\shop.h(55):	void browse_halfscreen(Deprecatedsquadst& customers, int& buyer) const;
+  sitemode\shop.h(70):		virtual void choose(Deprecatedsquadst& customers, int& buyer) const;
+  
+Matching lines: 23    Matching files: 5    Total files searched: 158
+\([^\(\r\n]*Deprecated
+Matching lines: 229    Matching files: 26    Total files searched: 158
+DeprecatedCreature::[^\(\r\n]+\([^\(\r\n]*Deprecated
+Matching lines: 91    Matching files: 16    Total files searched: 158
+
+Game now crashes with regards to hostages/kidnapping.  This is found in several backup versions.  Null pointer exception during the tendAllHostages function.
+Scrapped all remains of AbstractCreature.  Inheritance in C++ works differently than Java, especially with regards to overriding methods and virtual methods.  This led to a shitstorm.
+Further examination, this does not appear to be the cause.  Fucking c++.
+Lots of crashing, largely related to kidnapping and xml stuff.
+
+It appears to specifically be accessing member variables of the various references within DeprecatedCreature.  Augmentation*, Armor*, and Weapon* specifically.  Depending on how a creature is generated, the pointers it holds for those values may not be initialized.
+
+Backtrack to 4.12.28 in progress.
+
+4.12.30 Completely reverted to 4.12.28
+I have learned not to make such sweeping changes to so many areas at once.  The next attempt shall learn from the experience.
+
+Fixed bug where age estimates were replaced with odd symbols.
+
+4.12.31
+
+Fixed bug where game freezes on "Release Oppressed".
+
+4.12.32
+
+Removed allText.txt
+
+const string [\w\d]* = "
+7290
+const string tag[\w\d]* = "
+1063
+
+Deleted creaturenames.cpp
+
+After removing commented strings:
+Find all "const string [\w\d]* = \"", Regular expressions, Find Results 1, Current Project: game.vcxproj, ""
+ Matching lines: 7085    Matching files: 3    Total files searched: 169
+These 7085 const strings will be placed within preprocessor if statements, rather than creating 70+ new header files.  Mostly because that is much easier to automate, but also because the end goal is to remove them from the program entirely.
+
+Transferring most instances of extern and #include into the #ifdef blocks within includes.h
+This should help drastically in the identification and removal of duplicate code.
+
+includes.h
+extern 1992
+const string 7124
+
+
+
+talkAboutIssues(DeprecatedCreature &a, DeprecatedCreature &tk)
+wannaHearSomethingDisturbing(DeprecatedCreature &a, DeprecatedCreature &tk)
+ (and several others within talk.cpp)
+return type set to void, as it only ever returns 1
+
+Removed all usage of cursesAlternative printing in in files after and including talk.cpp
+
+4407 ...Alt()
+moved to cursesAlternative.cpp 486 total
+const string expressions are being transferred to the cursesAlternative.cpp section of includes.h
+Eventually, no file will interact with the cursesAlternative ..Alt( functions, and with it almost none will even interact with strings apart from const tags.
+The files in question are having #include "log.h" and #include "cursesAlternative.h" lines removed.  The latter requires some amount of getkeyAlt() and pressAnyKey() function declarations within includes.h
+Needing a full recompile after any change to includes.h is annoying, but that's the price for using #ifdef instead of separate files.  The first 1080 lines of includes.h are (potentially) used in 77 files.  The solution to the problem is simple, but time consuming.  Removing all these references to cursesAlternative.h will push towards the end goal of abolition of includes.h
+moved to cursesAlternative.cpp 537 total
+moved to cursesAlternative.cpp 668 total
+
+//Next target: 291 in siege.cpp
+// 947 total
+//Next target: 74 in shop.cpp
+
+
+Fixed a bug where having more than 19 save files would display incorrectly.
+
+
+new regular expresion used for better accuracy (removes eraseAlt(), that's basic enough to allow.  Also removed moveAlt(), but that's being phased out regardless)
+[rh]Alt\(
+Matching lines: 3992    Matching files: 42    Total files searched: 159
+cursesAlternative.cpp
+Matching lines: 930
+
+moveAlt()
+Matching lines: 159    Matching files: 19    Total files searched: 159
+ugh...
+
+refreshAlt()
+Matching lines: 18    Matching files: 10    Total files searched: 159
+Not significant enough to remove.
+
+Fixed crash to desktop during car chases.
+
+Plan to implement easier car chase testing.  A "start car chase" debug option.
+Sieges, too.
+
+4.12.33
+
+//Next target: 171 in reviewmode.cpp
+1108 total
+//Next target: 15 in recruit.cpp
+10 files down, 34 files to go
+//Next target: 160 in politics.cpp
+1279 total
+//Next target: 11 in news.cpp
+
+Removed much of the redundant code from includes.h
+Namely the redundant usage of extern lines and function declarations.
+
+The remaining usage of cursesAlternative within news.cpp are... complicated.  They will require detailed examination.
+
+Next target: newgame.cpp
+
+Gave somewhat more useful names to various constant strings.
+Found out why Java wasn't parsing the text properly.  The charset used by pdcurses is "IBM437", and when attempting to parse text with the default charset, java.io.Scanner throws an exception when it comes across an illegal character.  Setting the charset to "IBM437" allows Java to interpret the text data from pdcurses without issue.  Of the 6000 or so strings, about 120 still have previous default names.  Maybe 400.
+
+Finally, I know how to get Java to actually read the text data the same way pdcurses does.  71 files altered.
+
+4.12.34
+
+Time for Bugfixin'
+(approx 461 const strings still named const_filename_000 via regex [a-zA-Z]\d\d\d within includes.h)
+
+Note: CppDepend has identified over 1200 instances of fields with too long a name.  Naturally these are the auto-generated const string field names.  Not a big deal, but there are a lot of them.
+
+Replaced 
+using namespace std
+ with 
+using std::string;
+using std::vector;
+using std::map;
+etc.
+I just learned how to do this.
+That said, current setup only had a single instance of "using namespace std", so this was not a large change.
+But it broke the hell out of everything, so I switched it back.
+Broke the specialCharacter reading function, so accented characters are not all that usable for the time being.
+
+Fixed "no encounter warnings" (the encounter vector is set to read-only, but the vector was created before the encounter would be, so it would basically always be empty.)
+Fixed "Release Oppressed" when there aren't any oppressed (turns out the isPrisoner(creature) code was backwards.  This probably fixes other unnoticed problems)
+
+string extraCrimes(const bool liberalguardian, const bool ccs, const int type_sum, const int crime[CRIMENUM])
+	story += extraCrimes(ccs, liberalguardian, typesum, crime);
+Fixed newspaper referring to lcs as ccs.  Variables had been switched around.
+Fixed "Debuggers Needed" showing up in newspapers ad generation.  Hard to explain the exact cause, but basically it was an error test that was converted into a normal ad during code migration.
+
+4.12.35
+Fixed game crash when buying masks.
+
+4.12.36
+
+([a-zA-Z][a-zA-Z0-9]+[\*\&])|([\*\&][a-zA-Z][a-zA-Z0-9]+)
+First draft regex meant to track down all usage of pointers.
+3253 matching lines.  Includes a few strings using * as a censor, e.g. f*ck, a few usages of logic operator &&, and a few block comments /**/ that do not start with whitespace.
+490 within includes.h
+Those within includes.h are the bulk of the ones that are potentially a problem, as many are methods that pass by reference or return a pointer value, and are generally not confined to a single file.  A major issue is that, since the code generally functions properly so long as I don't change anything, any changes I make potentially introduce bugs in the code even though the motivation for changes is overwhelmingly to prevent the introduction of bugs in the code should the code ever be changed again.
+Finished the process of making the autogenerated strings have meaningful names.  The process was automated for 29 files.
+
+Fixed bug where juice was applied incorrectly to boost stats.
+
+4.12.37
+
+Fixed bug in character creation where answers would be applied repeatedly.
+
+4.12.38
+
+Fixed missing messages in justice.cpp
+Fixed crash during new game if wrong key is pressed
+
+4.12.39
+
+Fixed incorrect accented characters, again.
+áéöúóíüëòâ but not ¢ or ô
+
+4.12.40
+
+Fixed missing text in "pawn loot" at pawn shop.  Turns out it was an autoconversion between an int and a bool in the code I wrote.  Ah, the ignorance of youth.
+Didn't work.
+The real cause:
+y += 2 + left_side ? 0 : 1;
+Order of Operations!
+needs to be
+y += 2 + (left_side ? 0 : 1);
+
+4.12.41
+
+Applied Schmel924's fix in newgame.cpp to allow randomized character creation.
+Partially reverted some of creaturetype.cpp to 4.10
+xmllog is now 0 KB!  No errors in xml detected.
+Fixed the "why is everyone naked" bug.
+Fixed the implementation of XML basis for talkreceptive, seethroughstealth, seethroughdisguise, reports_to_police, and kidnap_resistant.
+This was the biggest known existing problem.  :dance for joy:
+
+4.12.42
+
+Fixed clothing repair bug.
+
+4.12.43
+
+Fixed squadless bug crash
+
+4.12.44
+Added changes by ArrowThunder
+'
+Fixed the bug where liberal views weren't affecting propositions, along with some other minor mistakes. The bug was actually affecting almost everywhere the public's opinions mattered, so some balance changes may be needed.
+
+Added a function to evaluate the public's interest in a given law. On a related note, legislators now factor in the intensity of the spotlight on the issue in question when proposing bills and casting their votes. Specifically, the intent of a bill is more strongly affected by the public when the public is extremely interested in the issue, and bills on hot topics also are made a higher priority. When it comes time to vote, now even arch-conservatives and elite-liberals have a chance of voting conservative and liberal respectively if interest levels are high enough. Conversely, at low interest levels, liberals and conservatives ignore any desires the public might have that might make them vote moderately.
+'
+
+Renamed const string YEA and const string NAY as CONST_YEA and CONST_NAY respectively
+
+4.12.45
+Fixed display error for state names
+
+Fixed missing break; statement that caused corporate files to mix with ccs backerlist
+
+4.12.46
+Sneak attacks done against lone conservative targets will no longer cause site alarm.
+
+4.12.47
+Rebalanced Stealth to make it actually usuable.  Difficulty is capped at SUPERHUMAN.
+
+4.12.48
+Fixed null pointer when a graffiti artist takes spray paint from storage
+
+4.12.49
+Fixed error message that appeared whenever a sleeper tried to steal from a place where there was nothing to steal, falsely presented as an XML fail
+
+4.12.50
+Fixed characters for ¢ and ô, the two missing characters from 4.12.39
+
+that helped me find the "CCS Leader Farm" bug
+sitemode.cpp 1710    //BAIL UPON VICTORY (version 2 -- defeated CCS safehouse)
+    if (ccs_boss_kills >= 1 &&
+...
+adding a check for the ccs_boss being kidnapped should resolve that
+
+Added initial support for RustKnight Portraits
+
+Fixed X Responds bug
+
+Major refactoring of talk.cpp, replacing many functions with enums
+
+4.12.51
+Fixed minor error introduced in 4.12.50
+Fixed display error 070) Cars
+
+4.12.52
+Fixed amendment crash for stalinist/confederate amendment
+
+4.12.53
+Fixed minor typo in Status of Liberal Agenda
+Identified and fixed the Party Switch Error 057)
+The error was determined to be present in 4.10, thereby predating my involvement
+Fixed lack of encounters in Internet Cafe (and Juice Bar)
+
+4.12.54
+Fixed extra press key bug on Highscore Menu
+Updated bay12 forums link
+
+4.12.55
+Added support for RustKnight Portraits
+
+4.12.56
+Reconstructed includes.h to allow compiling in 1/5 the time
+Massive Refactoring
+Working to restructure code to be more coherent
+Added noop3451 contributions
+Added some more text to art file
+Fixed Crackhouse business front note working
+062) Business Front does nothing for the Crack House
+Made Liberals have principles in elections
+Fixed newspaper bug where LCS flees from scene in CCS story 
+
+4.12.57
+Fixed Movies 067) No ASCII Animations Playing
+
+4.12.58
+Replaced #include guards with #pragma once
+Fixed most remaining const string names
+Removed unused preprocessor statements
+Removed Linux "Support" Preprocessor Statements
+
+String transfer 00,01,24,47,58,59,69
+
+Astronauts?
